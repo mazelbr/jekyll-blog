@@ -50,5 +50,22 @@ Simply create a `draft` folder. All the files in there won't show up in your run
 The first step is to create a new repository on github and make sure that it **does not include a README.md file**.
 
 Open the `config.yml`file and update the `base_url` with the name of the repository that you just created. In my case `jekyll-blog`
+`baseurl: "jekyll-blog"`
+Then go to the Gemfile and uncomment the `github-pages` gem. Apparently one should comment out the `jekyll` gem but for me it worked by just uncommenting the version. Eventuall one has tu run `bundle update` or `bundle install` before it works.
+```
+gem "jekyll"#, "~> 4.1.1"
+# This is the default theme for new Jekyll sites. You may change this to anything you like.
+gem "minima", "~> 2.5"
+# If you want to use GitHub Pages, remove the "gem "jekyll"" above and
+# uncomment the line below. To upgrade, run `bundle update github-pages`.
+gem "github-pages", group: :jekyll_plugins
+```
 
 Then we use git to manage the rest. First of all we initialize a git repository and then create a branch called `gh-pages`. This is necessary since Github expects all the files for the page to be in that branch
+```
+git init
+git checkout -b gh-pages
+git add .
+git remote add origin <repository url>
+git push origin gh-pages
+```

@@ -108,8 +108,9 @@ clf2 = load('clf.joblib')
 ```
 we create a `model` folder in the base directory of the `project` and inside there we store the serialized file.
 Luckily Django provides a `BASE_DIR` variable, which can be imported with `from django.config import settings` and accessed with `settings.BASE_DIR`. The further procedure is basically the same as in plain python. We create a path that points to the file, load it and use it.
+
 ```
-%views.py
+#views.py
 import os
 from joblib import dump, load
 

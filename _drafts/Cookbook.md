@@ -191,3 +191,108 @@ And that is literally all the magic. You now can access the the data however you
 def index(request):
     return HttpResponse(data)
 ```
+## How to Upload an Process Files without Storage
+Here we want to upload files e.g. Datafiles and process e.g. by displaying them.
+To get the basics set up we have to create a new route `path("upload/", views.upload, name="upload")`
+and initialize a `update` method in the `views` file.
+We then need a form that is able to take file and luckily django provides `FormField()`'s. So wie create a new Form class that inherits from Django forms
+```
+class FileForm(forms.Form):
+    
+    title = forms.CharField()
+    document = forms.FileField()
+
+```
+This form we want to be rendered in the views so we have to include it into the context of our response.
+```python
+return render(request, "ml/upload.html", {"form":FileForm()})
+```
+At the Views we can simply load that form but note that we have to take care about one more step.
+By default after submitting no files are submitted in the POST request, we have to explicitly enable that.
+**Important** Enable file transmission for your form with `enctype="multipart/form-data"`
+
+{% raw %}
+```html
+<form action= "{% url 'ml:upload' %}" method='post' enctype="multipart/form-data">
+    {% csrf_token %}
+    {{form}}
+    <input type="submit"> 
+</form>
+```
+{% endraw %}
+
+Now we have to care aboutn the processing of the POST request. Accoring to thee `Django` [documentation](https://docs.djangoproject.com/en/3.1/topics/http/file-uploads/) all transmitted files are stored in the `request.FILES` as dictionary, while all other form field are stored in `request.POST`. We then check if the method is an actual POST request and if so initialize a form with the content of the user.
+We can access the the file by the field name of the form class. We here named it `document` so we can access it with  `request.FILES['document']`.
+
+```python
+def update(request):
+    if request.method == "POST":
+        #return HttpResponse("Upload Successful")
+        
+        form = FileForm(request.POST, request.FILES)
+        
+        if form.is_valid():
+            data = request.FILES["document"]
+            data = pd.read_table(data, header=None)
+            output = data.head().to_html()
+            return render(request, "ml/upload.html", {"form": FileForm(), "output": output})
+
+        else:
+            return render(request, "ml/upload.html", {"form": form, "output": "Upload error"})
+
+    return render(request, "ml/upload.html", {"form":FileForm(),"output": None})
+
+```
+The last step is the rendering of our data at the request. I am not sure if this is the best and safest way to do this but pandas allows the generation of html text. We therefor can render our data as an HTML-table-string and pass that to the template. Since django by default escapes HTML we have to explicitly enable the processing of it. This can be done by the `safe` tag. at the html file we simply render the data with
+**Note** on `to_html()` if you want to add `css` classes for e.g. interacting with bootstrap then this can be done with `to_html(classes=["table-bordered", "table-striped", "table-hover"])`
+
+{% raw %}
+```html
+{{ form | safe }}
+```
+{% endraw %}
+
+**Note** we could extend the functionality by e.g. validating the file type. Django provides a custom `validator()` object that we could extend for checking e.g. the file type. Apparently it is best practicy to store validation in a file named `validations.py` and import from that by `from . import validations`.
+
+## How to add Stylesheets/Bootstrap to your Project
+To add a CSS Framework to your application you in general have two options. You either load the libaries via `cdn` from elsewhere (someonoe else then hosts the files an you just load them everytime) or you can download all the CSS and JS files and store them in a `static` folder inside your app.
+
+1. The first solution is rather simple
+In case of `Bootstrap` at this line to the header:
+{% raw %}
+```
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+```
+{% endraw %}
+And those lines close to the end of your `<\body>` tag
+{% raw %}
+```
+<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+```
+{% endraw %}
+Thats all you now can use Bootstrap however you want
+
+2. Self hosting the files (DOES NOT WORK)
+If you want to host the files on your own then Django assists you with static files. See the [Documentation]()
+
+First open your `project/setting.py` file and make sure that `django.contrib.staticfiles` is included in `INSTALLED_APPS`. At the bottom of the file you will find a variable `STATIC_URL` this defines the path (from the root) where django searches for static files. We then create a folder in the `appname/static/appname` (or which ever url is specified) directory. Inside there you can organize your static files more or less however you want. Apparently best practie is to give each applicatin its own folder and maybe you should consider seperate folders for `css` and `js`.
+
+We download the files from the `bootstrap` homepage and store the respectively. Note that bootstrap provides you different versions of the files and we only need the `bootstrap.css` and the `bootstrap.bundle.js`, if we want also to integrate `JQuery` we have to get this elsewhere.
+
+Most likely you want to manage the `css` and `js` files in a wrapper template and make the other templates inherit from that.
+Then include it wiht 
+{% raw %}
+<link rel="stylesheet" href="{% static 'appname/bootstrap.css' %}">
+{% endraw %}
+
+
+
+A Bootstrap Boilerplate code for that is also provided at the homepage.
+**Note** that autogenerated stuff such as Django Forms are not manageable with bootstrap out of the box but you either can code your own forms or you can use extensions such as `crispy-forms` or `bootstrap-forms`
+{% raw %}
+```
+
+```
+{% endraw %}

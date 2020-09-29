@@ -1,5 +1,7 @@
 ---
+layout: post
 title: Conflicts between Jekyll and Django [Solved]
+tag: quickfix Django Python Jekyll Liquid Blog
 ---
 
 # Conflicts between Django and Jekyll
@@ -8,13 +10,13 @@ Just after publishing my second block post is encountered another issue with Jek
 Github pages failed to built and told me that the `url tag is not a Liquid tag`.
 
 After some research I found out that `jekyll` uses `Liquid` tags for it's logic. If e.g. Jekyll wants to list all block posts it uses somewaht like this.
-{%raw%}
+{% raw %}
 ```
 {% for blog in blockposts %}
 ...
 {% endfor %}
 ```
-{%endraw%}
+{% endraw %}
 
 It obviously uses the same logic for dynamically rendering HTML pages as Django.
 But Django has more tags than Lquid so some of them are unknown for Liquid and even the known ones would mess up the rendering

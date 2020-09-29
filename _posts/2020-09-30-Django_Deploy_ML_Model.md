@@ -61,6 +61,7 @@ class TextForm(forms.Form):
 def index(request):
     return render(request, "ml/index.html", {"form": TextForm()})
 ```
+{% raw %}
 ```html
 %ml/index.html
 ...
@@ -71,6 +72,7 @@ def index(request):
 </form>
 ...
 ```
+{% endraw %}
 
 ### 4. Handle the POST request of the form
 If a the `index` view is accessed via Post we want to check and process the data, if the `method` is GET we want to render a plain form
@@ -157,6 +159,7 @@ def index(request):
         return render(request, "ml/index.html",context)
 ```
 And in the views:
+{% raw %}
 ```html
 <!DOCTYPE html>
 <html lang="en">
@@ -182,7 +185,7 @@ And in the views:
 </html>
 
 ```
-
+{% raw %}
 
 
 

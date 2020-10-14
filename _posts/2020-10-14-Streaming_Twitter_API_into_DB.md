@@ -1,6 +1,6 @@
 ---
 layout: post
-title:  "Connecting Python and MySQL"
+title:  "Streaming Tweets into Databases with tweepy"
 tag: python twitter api tweepy
 ---
 

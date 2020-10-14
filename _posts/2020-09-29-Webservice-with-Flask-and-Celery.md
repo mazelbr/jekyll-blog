@@ -114,6 +114,7 @@ def get_task(task_id):
     return jsonify(response)
 
 ```
+Last but not least: Don't forget to run your flask server
 ```python
 if __name__ == "__main__":
     app.run(debug=True)

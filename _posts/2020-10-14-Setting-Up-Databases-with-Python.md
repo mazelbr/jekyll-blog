@@ -14,7 +14,7 @@ First one has to install `MySQL-Server`. A easy option is the `MySQL Workbench` 
 Now lets start with creating a new database. After starting Workbench you will see all your available connections. There should at least be the `local` one (so the one that runs on YOUR machine), but you could also connect to other databases on different servers.
 Open your local connection
 
-![Overview Workbench](/assets/SQL_Worbench_Overview.JPG)
+![Overview Workbench](jekyll-blog/assets/SQL_Worbench_Overview.JPG)
 On the left you can see you databases. To create a new one you can left-click in that area. With left-click on `tables` you can create a new table. The right side is the `Console` here you can write and execute SQL commands. Feel free to use it for creations of databases as well.
 
 To Query things from the DB we first tell SQL which database to use with `USE testdb`. `Show databases` gives us a possible choices.
